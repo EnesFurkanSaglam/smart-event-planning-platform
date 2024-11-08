@@ -1,0 +1,8 @@
+package com.efs.backend.Exception;
+
+public class BaseException extends RuntimeException{
+
+    public BaseException(ErrorMessage errorMessage){
+        super(errorMessage.prepareErrorMessage());
+    }
+}
