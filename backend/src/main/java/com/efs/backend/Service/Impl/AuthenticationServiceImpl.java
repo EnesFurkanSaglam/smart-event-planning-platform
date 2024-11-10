@@ -49,6 +49,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 
         user.setCreatedAt(LocalDateTime.now());
         user.setUsername(input.getUsername());
+        user.setEmail(input.getEmail());
         user.setPassword(passwordEncoder.encode(input.getPassword()));
 
         return user;

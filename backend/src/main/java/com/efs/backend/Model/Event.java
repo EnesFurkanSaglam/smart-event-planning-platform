@@ -41,5 +41,8 @@ public class Event {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    @Column(name = "category")
+    private String category;
+
 
 }

@@ -13,6 +13,7 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 public class Comment {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long commentId;
@@ -22,8 +23,12 @@ public class Comment {
     private Event event;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = true)
-    private User user;
+    @JoinColumn(name = "message_sender_id", nullable = true)
+    private User messageSender;
+
+    @ManyToOne
+    @JoinColumn(name = "message_receiver_id", nullable = true)
+    private User messageReceiver;
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
