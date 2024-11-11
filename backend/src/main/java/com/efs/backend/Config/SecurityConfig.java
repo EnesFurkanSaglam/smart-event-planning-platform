@@ -35,8 +35,10 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http.csrf().disable()
+                .cors() // CORS'u etkinleştir
+                .and()
                 .authorizeHttpRequests(request ->
-                        request.requestMatchers(REGISTER,REFRESH_TOKEN,AUTHENTICATE).permitAll()
+                        request.requestMatchers(REGISTER, REFRESH_TOKEN, AUTHENTICATE).permitAll()
                                 .anyRequest()
                                 .authenticated())
                 .exceptionHandling().authenticationEntryPoint(authEntryPoint).and()
@@ -46,4 +48,5 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 }
