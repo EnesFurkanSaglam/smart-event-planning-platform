@@ -25,5 +25,8 @@ public class Point {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
 }

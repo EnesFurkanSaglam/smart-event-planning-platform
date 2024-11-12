@@ -1,29 +1,28 @@
 import React, { useState, useEffect } from 'react';
 
 const EditProfile = () => {
-
     const [userData, setUserData] = useState({
         username: '',
         email: '',
-        gender: '',
         name: '',
-        phone: '',
-        profile_picture: '',
         surname: '',
-        interests: ''
+        phone: '',
+        gender: '',
+        interest: '',
+        created_at: '',
+        location: '',
+        userId: '',
+        password: '',
+        profilePicture: ''
     });
-    const [isLoading, setIsLoading] = useState(true); // To handle loading state
-    const [error, setError] = useState(null); // For handling errors
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState("");
+    const [successMessage, setSuccessMessage] = useState("");
 
     useEffect(() => {
-        // Get token from localStorage
         const token = localStorage.getItem('accessToken');
-
         if (token) {
-            // Decode token to get the username (or handle it according to your JWT structure)
-            const username = getUsernameFromToken(token);  // Token'dan kullanıcı adını alıyoruz
-
-            fetch(`http://localhost:8081/user/users/me`, { // Kullanıcı adını URL'ye ekliyoruz
+            fetch(`http://localhost:8081/user/users/me`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -32,10 +31,13 @@ const EditProfile = () => {
             })
                 .then((response) => response.json())
                 .then((data) => {
+                    console.log('User data fetched:', data);
                     setUserData(data);
                     setIsLoading(false);
+                    setError(''); // Hata sıfırlanıyor
                 })
                 .catch((error) => {
+                    console.error('Error fetching user data:', error);
                     setError('Failed to fetch user data');
                     setIsLoading(false);
                 });
@@ -44,21 +46,6 @@ const EditProfile = () => {
             setIsLoading(false);
         }
     }, []);
-
-    const getUsernameFromToken = (token) => {
-        // Token'dan kullanıcı adını almak için basit bir fonksiyon
-        // Eğer JWT'nizin payload kısmında `sub` varsa, bunu kullanabilirsiniz
-        const base64Url = token.split('.')[1];
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const jsonPayload = decodeURIComponent(atob(base64)
-            .split('')
-            .map(function (c) {
-                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-            })
-            .join(''));
-        const parsedData = JSON.parse(jsonPayload);
-        return parsedData.sub;  // 'sub' JWT'deki kullanıcı adı olabilir
-    };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -70,8 +57,52 @@ const EditProfile = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Submit logic (e.g., API call)
-        console.log('User data submitted:', userData);
+
+        const token = localStorage.getItem('accessToken');
+        if (!token) {
+            setError('No token found');
+            return;
+        }
+
+        setSuccessMessage("");  // Her form gönderimi öncesinde başarı mesajını sıfırla
+        fetch('http://localhost:8081/user/users', {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(userData),
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                // Yanıtın içeriğini kontrol et
+                return response.text().then((text) => {
+                    try {
+                        // Eğer yanıt JSON ise, JSON'a dönüştür
+                        const data = JSON.parse(text);
+                        return data;
+                    } catch (e) {
+                        // JSON parse hatası olursa yanıtı logla
+                        console.error('Response is not valid JSON:', text);
+                        throw new Error('Response is not in valid JSON format');
+                    }
+                });
+            })
+            .then((data) => {
+                console.log('Update response:', data);
+                if (data.success) {
+                    setSuccessMessage('Profile updated successfully!');
+                } else {
+                    setError(`Failed to update profile: ${data.message || 'Unknown error'}`);
+                }
+            })
+            .catch((error) => {
+                console.error('Error while updating profile:', error);
+                setError(`Error while updating profile: ${error.message}`);
+            });
     };
 
     if (isLoading) {
@@ -85,6 +116,7 @@ const EditProfile = () => {
     return (
         <div className="user-profile-edit">
             <h2>Edit User Profile</h2>
+            {successMessage && <div style={{ color: 'green' }}>{successMessage}</div>}
             <form onSubmit={handleSubmit}>
                 <div>
                     <label htmlFor="username">Username:</label>
@@ -111,28 +143,24 @@ const EditProfile = () => {
                 </div>
 
                 <div>
-                    <label htmlFor="gender">Gender:</label>
-                    <select
-                        id="gender"
-                        name="gender"
-                        value={userData.gender}
-                        onChange={handleInputChange}
-                        required
-                    >
-                        <option value="">Select gender</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="other">Other</option>
-                    </select>
-                </div>
-
-                <div>
                     <label htmlFor="name">Name:</label>
                     <input
                         type="text"
                         id="name"
                         name="name"
                         value={userData.name}
+                        onChange={handleInputChange}
+                        required
+                    />
+                </div>
+
+                <div>
+                    <label htmlFor="surname">Surname:</label>
+                    <input
+                        type="text"
+                        id="surname"
+                        name="surname"
+                        value={userData.surname}
                         onChange={handleInputChange}
                         required
                     />
@@ -151,34 +179,38 @@ const EditProfile = () => {
                 </div>
 
                 <div>
-                    <label htmlFor="profile_picture">Profile Picture URL:</label>
-                    <input
-                        type="url"
-                        id="profile_picture"
-                        name="profile_picture"
-                        value={userData.profile_picture}
-                        onChange={handleInputChange}
-                    />
-                </div>
-
-                <div>
-                    <label htmlFor="surname">Surname:</label>
-                    <input
-                        type="text"
-                        id="surname"
-                        name="surname"
-                        value={userData.surname}
+                    <label htmlFor="gender">Gender:</label>
+                    <select
+                        id="gender"
+                        name="gender"
+                        value={userData.gender}
                         onChange={handleInputChange}
                         required
-                    />
+                    >
+                        <option value="">Select gender</option>
+                        <option value="MALE">Male</option>
+                        <option value="FEMALE">Female</option>
+                        <option value="OTHER">Other</option>
+                    </select>
                 </div>
 
                 <div>
-                    <label htmlFor="interests">Interests:</label>
+                    <label htmlFor="interest">Interests:</label>
                     <textarea
-                        id="interests"
-                        name="interests"
-                        value={userData.interests}
+                        id="interest"
+                        name="interest"
+                        value={userData.interest}
+                        onChange={handleInputChange}
+                    />
+                </div>
+
+                Profil fotoğrafı eklenmesi
+                <div>
+                    <label htmlFor="profilePicture">Profile Picture:</label>
+                    <input
+                        type="file"
+                        id="profilePicture"
+                        name="profilePicture"
                         onChange={handleInputChange}
                     />
                 </div>

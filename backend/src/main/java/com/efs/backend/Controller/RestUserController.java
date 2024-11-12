@@ -17,12 +17,12 @@ public class RestUserController {
     private IUserService userService;
 
     @Autowired
-    private JWTService jwtService;
-
-    @Autowired
     public void setUserService(IUserService userService) {
         this.userService = userService;
     }
+
+    @Autowired
+    private JWTService jwtService;
 
     @GetMapping("/users")
     public ResponseEntity<List<User>> getUsers(){
@@ -60,26 +60,27 @@ public class RestUserController {
         }
     }
 
-//    @PostMapping("/users")
-//    public ResponseEntity<?> saveUser(@RequestBody User user) {
-//        userService.saveUser(user);
-//        return ResponseEntity.ok("User Created.");
-//    }
+    @PostMapping("/users")
+    public ResponseEntity<?> saveUser(@RequestBody User user) {
+        userService.saveUser(user);
+        return ResponseEntity.ok("User Created.");
+    }
 
 
 
 
-//    @DeleteMapping(value = "/users/{id}")
-//    public ResponseEntity<?> deleteUser(@PathVariable("id") Long id) {
-//        userService.deleteUserById(id);
-//        return ResponseEntity.ok("User deleted...");
-//    }
+    @DeleteMapping(value = "/users/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable("id") Long id) {
+        userService.deleteUserById(id);
+        return ResponseEntity.ok("User deleted...");
+    }
 
-//    @PutMapping(value = "/users")
-//    public ResponseEntity<?> updateUser(@RequestBody User user) {
-//        userService.updateUser(user);
-//        return ResponseEntity.ok("User updated...");
-//    }
+    @PutMapping (value = "/users")
+    public ResponseEntity<?> updateUser(@RequestBody User user) {
 
+        userService.updateUser(user);
+        System.out.println(user);
+        return ResponseEntity.ok("User updated...");
+    }
 
 }

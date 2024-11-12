@@ -58,6 +58,9 @@ public class User implements UserDetails {
     @Column(name = "interest")
     private String interest;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Point> points;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

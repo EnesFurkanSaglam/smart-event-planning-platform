@@ -8,10 +8,10 @@ import java.util.List;
 
 public interface IEventService {
 
-//    List<Event> getEvents();
-//    Event getEventById(Long id);
-//    void saveEvent(Event event);
-//    void deleteEventById(Long id);
-//    void update(Event event);
+    List<Event> getEvents();
+    Event getEventById(Long id);
+    void saveEvent(Event event);
+    void deleteEventById(Long id);
+    void update(Event event);
 
 }

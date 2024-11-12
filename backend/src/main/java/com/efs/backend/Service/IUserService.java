@@ -12,9 +12,9 @@ public interface IUserService {
 
     User getUserById(Long id);
 
-//    void saveUser(User user);
+    void saveUser(User user);
 
-//    void deleteUserById(Long id);
+    void deleteUserById(Long id);
 
     void updateUser(User user);
 

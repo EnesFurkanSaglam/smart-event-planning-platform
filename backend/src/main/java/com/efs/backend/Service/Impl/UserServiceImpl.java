@@ -56,17 +56,17 @@ public class UserServiceImpl implements IUserService {
         return user;
     }
 
-    //
-//    @Override
-//    public void saveUser(User user) {
-//        userRepository.save(user);
-//    }
-//
-//    @Override
-//    public void deleteUserById(Long id) {
-//        userRepository.deleteById(id);
-//    }
-//
+
+    @Override
+    public void saveUser(User user) {
+        userRepository.save(user);
+    }
+
+    @Override
+    public void deleteUserById(Long id) {
+        userRepository.deleteById(id);
+    }
+
     @Override
     public void updateUser(User user) {
         userRepository.save(user);
