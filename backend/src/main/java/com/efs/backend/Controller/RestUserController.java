@@ -1,20 +1,28 @@
 package com.efs.backend.Controller;
 
 
+import com.efs.backend.DTO.DTOUser;
 import com.efs.backend.JWT.JWTService;
 import com.efs.backend.Model.User;
 import com.efs.backend.Service.IUserService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static com.efs.backend.Controller.RootEntity.ok;
 
 @RestController
 @RequestMapping("/user")
 public class RestUserController {
 
     private IUserService userService;
+
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
     public void setUserService(IUserService userService) {
@@ -42,15 +50,13 @@ public class RestUserController {
 
     @GetMapping("/users/me")
     public ResponseEntity<User> getUserFromToken(@RequestHeader("Authorization") String token) {
-        // Token'ı "Bearer <token>" şeklinde gönderdiğimiz için, öncelikle "Bearer " kısmını çıkarıyoruz.
+
         if (token.startsWith("Bearer ")) {
             token = token.substring(7);
         }
 
-        // Token'dan kullanıcı adı alınır
         String username = jwtService.getUsernameByToken(token);
 
-        // Kullanıcı adı ile veritabanından kullanıcıyı alıyoruz
         User user = userService.getUserByUsername(username);
 
         if (user != null) {
@@ -67,20 +73,28 @@ public class RestUserController {
     }
 
 
-
-
     @DeleteMapping(value = "/users/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable("id") Long id) {
         userService.deleteUserById(id);
         return ResponseEntity.ok("User deleted...");
     }
 
-    @PutMapping (value = "/users")
-    public ResponseEntity<?> updateUser(@RequestBody User user) {
+    @PatchMapping(value = "/users")
+    public RootEntity<User> updateUser(@RequestBody DTOUser dtoUser) {
 
-        userService.updateUser(user);
-        System.out.println(user);
-        return ResponseEntity.ok("User updated...");
+        User dbUser = userService.getUserByUsername(dtoUser.getUsername());
+
+        if (dtoUser.getPassword() == null || dtoUser.getPassword().isEmpty()) {
+            dtoUser.setPassword(dbUser.getPassword());
+        }else {
+            String encryptedPassword = passwordEncoder.encode(dtoUser.getPassword());
+            dtoUser.setPassword(encryptedPassword);
+        }
+
+        BeanUtils.copyProperties(dtoUser, dbUser);
+        userService.updateUser(dbUser);
+        return ok(userService.updateUser(dbUser));
     }
+
 
 }

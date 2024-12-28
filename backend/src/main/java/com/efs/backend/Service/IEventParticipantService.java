@@ -17,9 +17,15 @@ public interface IEventParticipantService {
 
     EventParticipant getEventParticipantByEventIdUserId(Long EventId,Long UserId);
 
-    void saveEventParticipant(EventParticipant eventParticipant);
+    boolean saveEventParticipant(EventParticipant eventParticipant);
 
     void updateEventParticipant(EventParticipant eventParticipant);
 
     void deleteEventParticipantByEventIdUserId(Long eventId, Long userId);
+
+    boolean isUserParticipatingInEvent(Long eventId, Long userId);
+
+    boolean isEventTimeConflicting(EventParticipant eventParticipant);
 }
+
+

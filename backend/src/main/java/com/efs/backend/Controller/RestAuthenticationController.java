@@ -1,9 +1,6 @@
 package com.efs.backend.Controller;
 
-import com.efs.backend.DTO.AuthRequest;
-import com.efs.backend.DTO.AuthResponse;
-import com.efs.backend.DTO.DtoUser;
-import com.efs.backend.DTO.RefreshTokenRequest;
+import com.efs.backend.DTO.*;
 import com.efs.backend.Service.IAuthenticationService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +15,7 @@ public class RestAuthenticationController extends RestBaseController {
     private IAuthenticationService authenticationService;
 
     @PostMapping("/register")
-    public RootEntity<DtoUser> register(@Valid @RequestBody AuthRequest input){
+    public RootEntity<DTOUser> register(@Valid @RequestBody AuthRequest input){
         return ok(authenticationService.register(input));
     }
 
@@ -31,5 +28,12 @@ public class RestAuthenticationController extends RestBaseController {
     public RootEntity<AuthResponse> refreshToken(@Valid @RequestBody RefreshTokenRequest input){
         return ok(authenticationService.refreshToken(input));
     }
+
+    @PostMapping("/refresh-password")
+    public void refreshPassword(@Valid @RequestBody MailRequest mailRequest){
+        authenticationService.sendEmail(mailRequest);
+    }
+
+
 
 }

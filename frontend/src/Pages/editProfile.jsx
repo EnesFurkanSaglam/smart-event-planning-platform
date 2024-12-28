@@ -1,106 +1,96 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
+import { Link } from 'react-router-dom';
+import "../CSS/EditProfile.css";
 
 const EditProfile = () => {
-    const [userData, setUserData] = useState({
-        username: '',
-        email: '',
-        name: '',
-        surname: '',
-        phone: '',
-        gender: '',
-        interest: '',
-        created_at: '',
-        location: '',
-        userId: '',
-        password: '',
-        profilePicture: ''
-    });
+    const [userData, setUserData] = useState(null);
+    const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
 
     useEffect(() => {
-        const token = localStorage.getItem('accessToken');
+        const token = localStorage.getItem("accessToken");
         if (token) {
-            fetch(`http://localhost:8081/user/users/me`, {
-                method: 'GET',
+            fetch("http://localhost:8081/user/users/me", {
+                method: "GET",
                 headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
                 },
             })
                 .then((response) => response.json())
                 .then((data) => {
-                    console.log('User data fetched:', data);
                     setUserData(data);
                     setIsLoading(false);
-                    setError(''); // Hata sıfırlanıyor
+                    setError("");
                 })
                 .catch((error) => {
-                    console.error('Error fetching user data:', error);
-                    setError('Failed to fetch user data');
+                    console.error("Error fetching user data:", error);
+                    setError("Failed to fetch user data");
                     setIsLoading(false);
                 });
         } else {
-            setError('No token found');
+            setError("No token found");
             setIsLoading(false);
         }
     }, []);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setUserData({
-            ...userData,
-            [name]: value
-        });
+        if (userData) {
+            setUserData({ ...userData, [name]: value });
+        }
+    };
+
+    const handlePasswordChange = (e) => {
+        setPassword(e.target.value);
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
-        const token = localStorage.getItem('accessToken');
+        const token = localStorage.getItem("accessToken");
         if (!token) {
-            setError('No token found');
+            setError("No token found");
             return;
         }
+        setSuccessMessage("");
+        setError("");
 
-        setSuccessMessage("");  // Her form gönderimi öncesinde başarı mesajını sıfırla
-        fetch('http://localhost:8081/user/users', {
-            method: 'PUT',
+        const updatedData = {
+            userId: userData.userId,
+            username: userData.username,
+            email: userData.email,
+            name: userData.name,
+            surname: userData.surname,
+            phone: userData.phone,
+            gender: userData.gender,
+            interest: userData.interest,
+        };
+
+        if (password.trim()) {
+            updatedData.password = password;
+        }
+
+        fetch("http://localhost:8081/user/users", {
+            method: "PATCH",
             headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
             },
-            body: JSON.stringify(userData),
+            body: JSON.stringify(updatedData),
         })
             .then((response) => {
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    throw new Error("Network response was not ok");
                 }
-
-                // Yanıtın içeriğini kontrol et
-                return response.text().then((text) => {
-                    try {
-                        // Eğer yanıt JSON ise, JSON'a dönüştür
-                        const data = JSON.parse(text);
-                        return data;
-                    } catch (e) {
-                        // JSON parse hatası olursa yanıtı logla
-                        console.error('Response is not valid JSON:', text);
-                        throw new Error('Response is not in valid JSON format');
-                    }
-                });
+                return response.json();
             })
             .then((data) => {
-                console.log('Update response:', data);
-                if (data.success) {
-                    setSuccessMessage('Profile updated successfully!');
-                } else {
-                    setError(`Failed to update profile: ${data.message || 'Unknown error'}`);
-                }
+                setSuccessMessage("Profile updated successfully!");
             })
             .catch((error) => {
-                console.error('Error while updating profile:', error);
+                console.error("Error while updating profile:", error);
                 setError(`Error while updating profile: ${error.message}`);
             });
     };
@@ -114,34 +104,10 @@ const EditProfile = () => {
     }
 
     return (
-        <div className="user-profile-edit">
+        <div className="edit-profile-container">
             <h2>Edit User Profile</h2>
-            {successMessage && <div style={{ color: 'green' }}>{successMessage}</div>}
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label htmlFor="username">Username:</label>
-                    <input
-                        type="text"
-                        id="username"
-                        name="username"
-                        value={userData.username}
-                        onChange={handleInputChange}
-                        required
-                    />
-                </div>
-
-                <div>
-                    <label htmlFor="email">Email:</label>
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value={userData.email}
-                        onChange={handleInputChange}
-                        required
-                    />
-                </div>
-
+            {successMessage && <div className="success-message">{successMessage}</div>}
+            <form onSubmit={handleSubmit} className="edit-profile-form">
                 <div>
                     <label htmlFor="name">Name:</label>
                     <input
@@ -153,7 +119,6 @@ const EditProfile = () => {
                         required
                     />
                 </div>
-
                 <div>
                     <label htmlFor="surname">Surname:</label>
                     <input
@@ -165,7 +130,17 @@ const EditProfile = () => {
                         required
                     />
                 </div>
-
+                <div>
+                    <label htmlFor="email">Email:</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value={userData.email}
+                        onChange={handleInputChange}
+                        required
+                    />
+                </div>
                 <div>
                     <label htmlFor="phone">Phone:</label>
                     <input
@@ -177,7 +152,6 @@ const EditProfile = () => {
                         required
                     />
                 </div>
-
                 <div>
                     <label htmlFor="gender">Gender:</label>
                     <select
@@ -193,7 +167,6 @@ const EditProfile = () => {
                         <option value="OTHER">Other</option>
                     </select>
                 </div>
-
                 <div>
                     <label htmlFor="interest">Interests:</label>
                     <textarea
@@ -203,19 +176,20 @@ const EditProfile = () => {
                         onChange={handleInputChange}
                     />
                 </div>
-
-                Profil fotoğrafı eklenmesi
                 <div>
-                    <label htmlFor="profilePicture">Profile Picture:</label>
+                    <label htmlFor="password">Password: (To keep your password, leave it blank)</label>
                     <input
-                        type="file"
-                        id="profilePicture"
-                        name="profilePicture"
-                        onChange={handleInputChange}
+                        type="password"
+                        id="password"
+                        name="password"
+                        value={password}
+                        onChange={handlePasswordChange}
                     />
                 </div>
-
-                <button type="submit">Save Changes</button>
+                <button type="submit" className="save-button">Save Changes</button>
+                <Link to="/edit-location" className="edit-location-link">
+                    Edit Location
+                </Link>
             </form>
         </div>
     );

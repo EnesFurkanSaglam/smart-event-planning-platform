@@ -17,12 +17,8 @@ const LoginPage = () => {
             });
 
             if (response.data) {
-                const { accessToken, refreshToken } = response.data.payload;
-                // Token'ları localStorage'a kaydediyoruz
+                const { accessToken } = response.data.payload;
                 localStorage.setItem('accessToken', accessToken);
-                localStorage.setItem('refreshToken', refreshToken);
-
-                console.log('Login successful:', response.data);
                 navigate('/dashboard');
             }
         } catch (error) {
@@ -38,12 +34,12 @@ const LoginPage = () => {
 
     const handleForgotPassword = () => {
         console.log('Forgot password');
-
+        navigate('/forgot-password');
     };
 
     return (
-        <div className="container">
-            <h2>Giriş Yap</h2>
+        <div className="login-container">
+            <h2>Login</h2>
             <div className="input-container">
                 <label>Username</label>
                 <input
@@ -51,6 +47,7 @@ const LoginPage = () => {
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     placeholder="Type Username"
+                    className="input-field"
                 />
             </div>
             <div className="input-container">
@@ -60,9 +57,10 @@ const LoginPage = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Type Password"
+                    className="input-field"
                 />
             </div>
-            <button onClick={handleLogin} className="button">
+            <button onClick={handleLogin} className="login-button">
                 Login
             </button>
             {error && <div className="error-message">{error}</div>}

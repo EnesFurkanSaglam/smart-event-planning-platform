@@ -1,15 +1,16 @@
 package com.efs.backend.DTO;
 
-
-import com.efs.backend.Model.Location;
-import lombok.Getter;
-import lombok.Setter;
+import com.efs.backend.Enum.Gender;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class DtoUser {
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+public class DTOUser {
 
     private Long userId;
 
@@ -21,7 +22,16 @@ public class DtoUser {
 
     private String profilePicture;
 
-    private Location location;
-
     private LocalDateTime createdAt;
+
+    private String name;
+
+    private String surname;
+
+    private String phone;
+
+    private Gender gender;
+
+    private String interest;
+
 }

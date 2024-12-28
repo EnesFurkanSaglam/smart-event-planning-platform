@@ -1,0 +1,47 @@
+.event-detail-container {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.event-detail-content {
+    margin-bottom: 20px;
+}
+
+.event-title {
+    font-size: 2em;
+    color: #333;
+}
+
+.event-description,
+.event-time,
+.event-location,
+.event-organizer {
+    font-size: 1.2em;
+    margin: 10px 0;
+    color: #555;
+}
+
+.event-actions {
+    margin: 20px 0;
+}
+
+.action-button {
+    padding: 10px 15px;
+    margin-right: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.action-button:hover {
+    background-color: #0056b3;
+}
+
+.action-button:focus {
+    outline: none;
+}

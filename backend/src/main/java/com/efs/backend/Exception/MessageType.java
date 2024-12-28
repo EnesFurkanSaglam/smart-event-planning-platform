@@ -15,7 +15,6 @@ public enum MessageType {
     USERNAME_OR_PASSWORD_INVALID("1007","Username or password invalid");
 
 
-
     private String code;
     private String message;
 

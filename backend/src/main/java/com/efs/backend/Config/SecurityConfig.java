@@ -20,6 +20,7 @@ public class SecurityConfig {
     public static final String REGISTER ="/register";
     public static final String AUTHENTICATE = "/authenticate";
     public static final String REFRESH_TOKEN = "/refresh-token";
+    public static final String REFRESH_PASSWORD = "/refresh-password";
 
     @Autowired
     private AuthenticationProvider authenticationProvider;
@@ -35,10 +36,10 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http.csrf().disable()
-                .cors() // CORS'u etkinleştir
+                .cors()
                 .and()
                 .authorizeHttpRequests(request ->
-                        request.requestMatchers(REGISTER, REFRESH_TOKEN, AUTHENTICATE).permitAll()
+                        request.requestMatchers(REGISTER, REFRESH_TOKEN, AUTHENTICATE,REFRESH_PASSWORD).permitAll()
                                 .anyRequest()
                                 .authenticated())
                 .exceptionHandling().authenticationEntryPoint(authEntryPoint).and()

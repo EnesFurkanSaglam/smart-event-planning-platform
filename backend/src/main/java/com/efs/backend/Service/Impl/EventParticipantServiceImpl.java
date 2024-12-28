@@ -1,23 +1,30 @@
 package com.efs.backend.Service.Impl;
 
 import com.efs.backend.DAO.IEventParticipantRepository;
+import com.efs.backend.DAO.IEventRepository;
+import com.efs.backend.Model.Event;
 import com.efs.backend.Model.EventParticipant;
 import com.efs.backend.Service.IEventParticipantService;
+import com.efs.backend.Service.IPointService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class EventParticipantServiceImpl implements IEventParticipantService {
 
-
+    private IPointService pointService;
     private IEventParticipantRepository eventParticipantRepository;
+    private IEventRepository eventRepository;
 
     @Autowired
-    public void setEventParticipantRepository(IEventParticipantRepository eventParticipantRepository){
+    public void setEventParticipantRepository(IEventParticipantRepository eventParticipantRepository, IEventRepository eventRepository, IPointService pointService) {
         this.eventParticipantRepository = eventParticipantRepository;
+        this.eventRepository = eventRepository;
+        this.pointService = pointService;
     }
 
 
@@ -39,25 +46,32 @@ public class EventParticipantServiceImpl implements IEventParticipantService {
     @Override
     public EventParticipant getEventParticipantByEventIdUserId(Long eventId, Long userId) {
 
-        Optional<EventParticipant> result = eventParticipantRepository.getEventParticipantByUserIdByEventId(eventId,userId);
+        Optional<EventParticipant> result = eventParticipantRepository.getEventParticipantByUserIdByEventId(eventId, userId);
 
         EventParticipant eventParticipant = null;
 
-        if (result.isPresent()){
+        if (result.isPresent()) {
             eventParticipant = result.get();
 
-        }else {
+        } else {
             return null;
-            //excetion fırlatılmasıl lazım
         }
 
         return eventParticipant;
     }
 
     @Override
-    public void saveEventParticipant(EventParticipant eventParticipant) {
-        eventParticipantRepository.save(eventParticipant);
+    public boolean saveEventParticipant(EventParticipant eventParticipant) {
+        System.out.println(isUserParticipatingInEvent(eventParticipant.getEventId(), eventParticipant.getUserId()));
+        if (isUserParticipatingInEvent(eventParticipant.getEventId(), eventParticipant.getUserId()) || isEventTimeConflicting(eventParticipant)) {
+            return false;
+        } else {
+            eventParticipantRepository.save(eventParticipant);
+            pointService.addParticipationPoints(eventParticipant.getUserId());
+            return true;
+        }
     }
+
 
     @Override
     public void updateEventParticipant(EventParticipant eventParticipant) {
@@ -71,13 +85,54 @@ public class EventParticipantServiceImpl implements IEventParticipantService {
         result.ifPresent(eventParticipantRepository::delete);
     }
 
+    @Override
     public boolean isUserParticipatingInEvent(Long eventId, Long userId) {
-
-        return eventParticipantRepository.getEventParticipantByUserIdByEventId(eventId, userId).isPresent();
+        return eventParticipantRepository.getEventParticipantByUserIdByEventId(userId, eventId).isPresent();
     }
 
-    public long countParticipantsByEventId(Long eventId) {
+    @Override
+    public boolean isEventTimeConflicting(EventParticipant eventParticipant) {
 
+        long userId = eventParticipant.getUserId();
+        long eventId = eventParticipant.getEventId();
+
+        Optional<Event> result = eventRepository.findById(eventId);
+        if (!result.isPresent()) {
+            throw new IllegalArgumentException("Event not found");
+        }
+        Event event = result.get();
+
+        LocalDateTime newEventStart = event.getStartTime();
+        LocalDateTime newEventEnd = event.getEndTime();
+
+
+        List<EventParticipant> allEventsParticipateByUser = eventParticipantRepository.getEventParticipantByUserId(userId);
+
+
+        for (EventParticipant existingParticipant : allEventsParticipateByUser) {
+            Optional<Event> e = eventRepository.findById(existingParticipant.getEventId());
+
+
+            if (!e.isPresent()) {
+                continue;
+            }
+
+            Event existingEvent = e.get();
+            LocalDateTime existingEventStart = existingEvent.getStartTime();
+            LocalDateTime existingEventEnd = existingEvent.getEndTime();
+
+
+            if (newEventStart.isBefore(existingEventEnd) && newEventEnd.isAfter(existingEventStart)) {
+                return true;
+            }
+        }
+
+
+        return false;
+    }
+
+
+    public long countParticipantsByEventId(Long eventId) {
         return eventParticipantRepository.countByEventId(eventId);
     }
 }

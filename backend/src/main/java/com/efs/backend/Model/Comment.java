@@ -4,7 +4,6 @@ package com.efs.backend.Model;
 import java.time.LocalDateTime;
 import jakarta.persistence.*;
 import lombok.*;
-
 @Entity
 @Table(name = "comments")
 @Getter
@@ -26,15 +25,14 @@ public class Comment {
     @JoinColumn(name = "message_sender_id", nullable = true)
     private User messageSender;
 
-    @ManyToOne
-    @JoinColumn(name = "message_receiver_id", nullable = true)
-    private User messageReceiver;
-
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
     @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 
-
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+    }
 }

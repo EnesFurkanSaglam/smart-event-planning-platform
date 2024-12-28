@@ -57,13 +57,12 @@ public class RestEventParticipantController {
         }else {
             return ResponseEntity.notFound().build();
         }
-
     }
 
     @PostMapping("/eventParticipants")
-    public ResponseEntity<?> saveEventParticipants(@RequestBody EventParticipant eventParticipant){
-        eventParticipantService.saveEventParticipant(eventParticipant);
-        return ResponseEntity.ok("Event Participants created");
+    public ResponseEntity<Boolean> saveEventParticipants(@RequestBody EventParticipant eventParticipant){
+        boolean isSaved = eventParticipantService.saveEventParticipant(eventParticipant);
+        return ResponseEntity.ok(isSaved);
     }
 
     @DeleteMapping("/eventParticipants/user/{userId}/event/eventId")

@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import '../CSS/Register.css';
+import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const navigate = useNavigate();
 
     const handleRegister = async (e) => {
         e.preventDefault();
@@ -16,7 +19,9 @@ const Register = () => {
                 password,
             });
             console.log('User registered successfully', response.data);
-            // Success logic, e.g., redirect to login page
+            alert('User registered successfully',)
+            navigate('/');
+
         } catch (err) {
             console.error('Registration error', err);
             setError('An error occurred during registration');
@@ -25,11 +30,12 @@ const Register = () => {
 
     return (
         <div className="register-container">
-            <h2>Register</h2>
+            <h2 className="register-title">Register</h2>
             <form onSubmit={handleRegister}>
-                <div className="form-group">
-                    <label htmlFor="username">Username</label>
+                <div className="register-form-group">
+                    <label className="register-label" htmlFor="username">Username</label>
                     <input
+                        className="register-input"
                         type="text"
                         id="username"
                         value={username}
@@ -37,9 +43,10 @@ const Register = () => {
                         required
                     />
                 </div>
-                <div className="form-group">
-                    <label htmlFor="email">Email</label>
+                <div className="register-form-group">
+                    <label className="register-label" htmlFor="email">Email</label>
                     <input
+                        className="register-input"
                         type="email"
                         id="email"
                         value={email}
@@ -47,9 +54,10 @@ const Register = () => {
                         required
                     />
                 </div>
-                <div className="form-group">
-                    <label htmlFor="password">Password</label>
+                <div className="register-form-group">
+                    <label className="register-label" htmlFor="password">Password</label>
                     <input
+                        className="register-input"
                         type="password"
                         id="password"
                         value={password}
@@ -57,8 +65,8 @@ const Register = () => {
                         required
                     />
                 </div>
-                {error && <p className="error">{error}</p>}
-                <button type="submit">Register</button>
+                {error && <p className="register-error">{error}</p>}
+                <button className="register-button" type="submit">Register</button>
             </form>
         </div>
     );

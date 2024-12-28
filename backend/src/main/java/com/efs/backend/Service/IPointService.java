@@ -16,7 +16,13 @@ public interface IPointService {
 
     void updatePoint(Point point);
 
-    Point getPointByUserId(Long id);
+    List<Point> getPointByUserId(Long id);
+
+    Double getSumPoint(Long userId);
+
+    void addParticipationPoints(Long userId);
+
+    void addCreatePoints(Long userId);
 
 
 }

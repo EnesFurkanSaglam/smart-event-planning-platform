@@ -28,7 +28,6 @@ public class JWTService {
                 .signWith(getKey(), SignatureAlgorithm.HS256)
                 .compact();
 
-
     }
 
     public <T> T exportToken(String token, Function<Claims,T> claimsTFunction){

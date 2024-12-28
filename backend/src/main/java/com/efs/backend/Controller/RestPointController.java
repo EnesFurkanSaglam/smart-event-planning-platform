@@ -27,6 +27,7 @@ public class RestPointController {
         List<Point> pointList = pointService.getPoints();
         return ResponseEntity.ok(pointList);
     }
+
     @GetMapping("points/{id}")
     public ResponseEntity<Point> getPointById(@PathVariable("id") Long id){
         Point point = pointService.getPointById(id);
@@ -37,9 +38,15 @@ public class RestPointController {
         }
     }
 
+    @GetMapping("/points/sum/{id}")
+    public ResponseEntity<Double> getSumPointsById(@PathVariable("id") Long id){
+        Double sumPoint = pointService.getSumPoint(id);
+        return ResponseEntity.ok(sumPoint);
+    }
+
     @GetMapping("points/by-user{id}")
-    public ResponseEntity<Point> getPointByUserId(@PathVariable("id") Long userid){
-        Point point = pointService.getPointByUserId(userid);
+    public ResponseEntity<List<Point>> getPointByUserId(@PathVariable("id") Long userid){
+        List<Point> point = pointService.getPointByUserId(userid);
         if (point != null){
             return ResponseEntity.ok(point);
         }else{

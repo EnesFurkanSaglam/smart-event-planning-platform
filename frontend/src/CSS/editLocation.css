@@ -1,0 +1,68 @@
+.edit-location-container {
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+}
+
+.edit-location-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.edit-location-form h2 {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.edit-location-form label {
+    margin-bottom: 10px;
+}
+
+.edit-location-form input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    margin-left: 15px;
+    width: 490px;
+}
+
+.update-coordinates-button,
+.save-location-button {
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.update-coordinates-button {
+    background-color: #007bff;
+}
+
+.save-location-button {
+    background-color: #28a745;
+}
+
+.update-coordinates-button:hover {
+    background-color: #0056b3;
+}
+
+.save-location-button:hover {
+    background-color: #218838;
+}
+
+.error-message {
+    color: red;
+    text-align: center;
+}
+
+.location-info {
+    margin: 15px 0;
+    text-align: center;
+}

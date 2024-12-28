@@ -12,7 +12,7 @@ public interface ILocationService {
 
     Location getLocationById(Long id);
 
-    void saveLocation(Location location);
+    Location saveLocation(Location location);
 
     void deleteLocationById(Long id);
 

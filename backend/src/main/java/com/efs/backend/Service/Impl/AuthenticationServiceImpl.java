@@ -3,17 +3,16 @@ package com.efs.backend.Service.Impl;
 
 import com.efs.backend.DAO.IRefreshTokenRepository;
 import com.efs.backend.DAO.IUserRepository;
-import com.efs.backend.DTO.AuthRequest;
-import com.efs.backend.DTO.AuthResponse;
-import com.efs.backend.DTO.DtoUser;
-import com.efs.backend.DTO.RefreshTokenRequest;
+import com.efs.backend.DTO.*;
 import com.efs.backend.Exception.BaseException;
 import com.efs.backend.Exception.ErrorMessage;
 import com.efs.backend.Exception.MessageType;
 import com.efs.backend.JWT.JWTService;
 import com.efs.backend.Model.RefreshToken;
 import com.efs.backend.Model.User;
+import com.efs.backend.Service.EmailService;
 import com.efs.backend.Service.IAuthenticationService;
+import com.efs.backend.Service.IUserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -44,6 +43,12 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
     @Autowired
     private IRefreshTokenRepository refreshTokenRepository;
 
+    @Autowired
+    private IUserService userService;
+
+    @Autowired
+    private EmailService emailService;
+
     private User createUser(AuthRequest input){
         User user = new User();
 
@@ -67,9 +72,9 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 
 
     @Override
-    public DtoUser register(AuthRequest input) {
+    public DTOUser register(AuthRequest input) {
 
-        DtoUser dtoUser = new DtoUser();
+        DTOUser dtoUser = new DTOUser();
         User savedUser = userRepository.save(createUser(input));
 
         BeanUtils.copyProperties(savedUser,dtoUser);
@@ -128,4 +133,19 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
         return new AuthResponse(accessToken,savedRefreshToken.getRefreshToken());
 
     }
+
+    @Override
+    public void sendEmail(MailRequest mailRequest) {
+        String newPassword = "0000";
+        String email = mailRequest.getEmail();
+        String username = mailRequest.getUsername();
+
+        User user = userService.getUserByUsername(username);
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+
+        emailService.sendPasswordResetEmail(email, newPassword);
+    }
+
 }

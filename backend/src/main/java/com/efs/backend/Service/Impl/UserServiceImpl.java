@@ -36,7 +36,7 @@ public class UserServiceImpl implements IUserService {
             user = result.get();
         }else{
             return null;
-            //excetion fırlatılmasıl lazım
+
         }
         return user;
     }
@@ -51,15 +51,15 @@ public class UserServiceImpl implements IUserService {
             user = result.get();
         }else{
             return null;
-            //excetion fırlatılmasıl lazım
+
         }
         return user;
     }
 
 
     @Override
-    public void saveUser(User user) {
-        userRepository.save(user);
+    public User saveUser(User user) {
+        return userRepository.save(user);
     }
 
     @Override
@@ -68,10 +68,14 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public void updateUser(User user) {
-        userRepository.save(user);
-    }
+    public User updateUser(User user) {
 
+        Optional<User> daoUser = userRepository.findById(user.getUserId());
+        if(daoUser.isPresent()){
+            return userRepository.save(user);
+        }
+       return null;
+    }
 
 
 }

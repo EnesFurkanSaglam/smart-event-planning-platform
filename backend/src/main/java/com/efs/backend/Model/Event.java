@@ -13,7 +13,6 @@ import lombok.*;
 @ToString
 public class Event {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long eventId;
@@ -39,10 +38,13 @@ public class Event {
     private User organizer;
 
     @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 
     @Column(name = "category")
     private String category;
 
-
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+    }
 }

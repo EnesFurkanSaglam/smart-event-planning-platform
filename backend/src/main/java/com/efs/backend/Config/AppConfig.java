@@ -31,7 +31,6 @@ public class AppConfig {
             public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
                 Optional<User> optional = userRepository.getByUsername(username);
-
                 if (optional.isEmpty()){
                     throw  new BaseException(new ErrorMessage(username, MessageType.USERNAME_NOT_FOUND));
                 }
@@ -47,7 +46,6 @@ public class AppConfig {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService());
         provider.setPasswordEncoder(passwordEncoder());
-
         return provider;
     }
 

@@ -1,35 +1,57 @@
-.container {
-    max-width: 400px;
-    margin: 0 auto;
+.login-container {
+    margin: 20px;
     padding: 20px;
-    text-align: center;
-    border: 1px solid #ccc;
-    border-radius: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    max-width: 400px;
+    margin: auto;
 }
 
 .input-container {
     margin-bottom: 15px;
+    width: 350px;
 }
 
-.button {
-    width: 100%;
+.input-field {
     padding: 10px;
-    background-color: #4CAF50;
-    color: white;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+}
+
+.login-button {
+    padding: 10px 15px;
     border: none;
     border-radius: 5px;
+    background-color: #007bff;
+    color: white;
     cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.login-button:hover {
+    background-color: #0056b3;
+}
+
+.error-message {
+    margin-top: 15px;
+    font-weight: bold;
+    color: red;
 }
 
 .link-container {
-    display: flex;
-    justify-content: space-between;
     margin-top: 15px;
 }
 
 .link-button {
-    background-color: transparent;
-    color: #007bff;
+    background: none;
     border: none;
+    color: #007bff;
     cursor: pointer;
+    text-decoration: underline;
+}
+
+.link-button:hover {
+    color: #0056b3;
 }
