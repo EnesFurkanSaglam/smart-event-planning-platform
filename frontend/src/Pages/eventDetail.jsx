@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { GoogleMap, LoadScript, Marker, DirectionsRenderer } from '@react-google-maps/api';
 import '../CSS/EventDetail.css';
 
-const API_KEY = "AIzaSyCEL7rFzCU8hJ9HbpuPVwP2VA2Eo2sqCl0";
+const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
 const EventDetail = () => {
     const { id } = useParams();
